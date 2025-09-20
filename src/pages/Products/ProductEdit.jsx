@@ -1,14 +1,26 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FaTimes } from "react-icons/fa"
 import "../../styles.css"
 
-function ProductForm({ onClose, onSave, empresas = [] }) {
+function ProductEdit({ product, empresas = [], onClose, onSave }) {
     const [formData, setFormData] = useState({
         name: "",
         valor: "",
         descricao: "",
         empresa: ""
     })
+
+    useEffect(() => {
+        if (product) {
+            const empresaSelecionada = empresas.find(e => e.name === product.empresa)
+            setFormData({
+                name: product.name,
+                valor: product.valor,
+                descricao: product.descricao,
+                empresa: empresaSelecionada ? empresaSelecionada.id : ""
+            })
+        }
+    }, [product, empresas])
 
     const handleInputChange = (e) => {
         setFormData({
@@ -30,24 +42,22 @@ function ProductForm({ onClose, onSave, empresas = [] }) {
         setFormData({ ...formData, valor: value });
     };
 
-
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        if (!formData.empresa) {
-            alert("Selecione uma empresa!")
-            return
-        }
-
-        onSave(formData);
-        setFormData({ name: "", valor: "", descricao: "", empresa: "" })
-    };
+        const empresaSelecionada = empresas.find(e => e.id === parseInt(formData.empresa))
+        onSave({
+            ...formData,
+            id: product.id,
+            empresa: empresaSelecionada ? empresaSelecionada.name : "",
+            cnpj: empresaSelecionada ? empresaSelecionada.cnpj : ""
+        })
+    }
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h3 className="modal-title">Cadastrar Produto</h3>
+                    <h3 className="modal-title">Editar Produto</h3>
                     <button className="close-button" onClick={onClose}>
                         <FaTimes />
                     </button>
@@ -96,16 +106,15 @@ function ProductForm({ onClose, onSave, empresas = [] }) {
                         >
                             <option value="">Selecione uma empresa</option>
                             {empresas.map((emp) => (
-                                <option key={emp.name} value={emp.name}>
+                                <option key={emp.id} value={emp.id}>
                                     {emp.name}
                                 </option>
                             ))}
                         </select>
                     </div>
 
-
                     <button type="submit" className="submit-button">
-                        Salvar
+                        Salvar Alterações
                     </button>
                 </form>
             </div>
@@ -113,4 +122,4 @@ function ProductForm({ onClose, onSave, empresas = [] }) {
     );
 }
 
-export default ProductForm
+export default ProductEdit

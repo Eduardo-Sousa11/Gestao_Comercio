@@ -108,7 +108,7 @@ button {
 }
 
 button:hover {
-  background-color: rgb(31 41 59);
+  background-color: hsl(0 0% 96.1%);
 }
 
 .register-link {
@@ -158,7 +158,6 @@ button:hover {
   color: green;
 }
 
-/* Container geral */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -166,7 +165,6 @@ button:hover {
   background: #f3f4f6;
 }
 
-/* Sidebar */
 .sidebar {
   width: 220px;
   background: #0b0c1a;
@@ -266,21 +264,17 @@ button:hover {
 }
 
 
-/* Container geral */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
   background: #f9fafb;
-  /* branco suave */
   color: #111827;
 }
 
-/* Sidebar */
 .sidebar {
   width: 240px;
   background: #4dd0e1;
-  /* verde-água */
   color: #fff;
   padding: 40px 20px;
   display: flex;
@@ -292,14 +286,11 @@ button:hover {
 .sidebar h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
-  /* um pouco maior se quiser */
   color: #333;
   text-align: center;
-  /* centraliza o texto */
   border-bottom: 2px solid #ddd;
-  /* linha de separação */
   padding-bottom: 10px;
-  /* espaço entre o texto e a linha */
+
 }
 
 .sidebar ul {
@@ -332,7 +323,7 @@ button:hover {
 .sidebar li.logout {
   margin-top: auto;
   background: hsl(0 0% 96.1%);
-  /* verde escuro */
+
 }
 
 .sidebar li.logout:hover {
@@ -340,7 +331,7 @@ button:hover {
   transform: translateX(5px);
 }
 
-/* Container geral */
+
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -348,7 +339,7 @@ button:hover {
   background-color: #f5f6fa;
 }
 
-/* Sidebar */
+
 .sidebar {
   width: 220px;
   background-color: #fff;
@@ -463,4 +454,246 @@ button:hover {
     margin-right: 8px;
     font-size: 1.2rem;
 }
+
+.companies-container {
+  background-color: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+}
+
+.companies-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.companies-table th,
+.companies-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.companies-table th {
+  background-color: #f4f4f4;
+}
+
+.action-icon {
+  cursor: pointer;
+  margin-right: 10px;
+  transition: transform 0.2s;
+}
+
+.action-icon:hover {
+  transform: scale(1.2);
+}
+
+.action-icon.edit {
+  color: #007bff;
+}
+
+.action-icon.delete {
+  color: #e74c3c;
+}
+
+.companies-header {
+  display: flex;                 
+  justify-content: space-between; 
+  align-items: center;           
+  margin-bottom: 20px;
+  padding: 0 20px; 
+}
+
+.companies-header h2 {
+  margin: 0;
+}
+
+.add-company-button {
+  background-color: hsl(0 0% 96.1%);
+  color: hsl(0 0% 9%);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 209px;
+}
+
+.add-company-button:hover {
+  background-color: hsl(0 0% 96.1%);
+}
+
+
+.companies-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-company-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-company-button:hover {
+  background: #0056b3;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  padding: 25px 30px;
+  width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-title {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;     
+  border: none;        
+  padding: 0;           
+  margin: 0;
+  font-size: 18px;      
+  line-height: 1;       
+  color: hsl(0 0% 9%);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-button:hover {
+  color: hsl(0 0% 96.1%);
+}
+
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+  color: #444;
+}
+
+.form-group input {
+  width: 94%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-button:hover {
+  background: #0056b3;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flow-root;
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  width: 46px;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.modal-form select,
+.modal-form input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.modal-form select:focus,
+.modal-form input:focus {
+  border-color: #007bff; /* mesma cor do focus dos inputs */
+}
+
+
+
+
 

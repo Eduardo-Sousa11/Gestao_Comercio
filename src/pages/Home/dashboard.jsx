@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../../styles.css';
-import { FaBuilding, FaBoxOpen, FaUsers, FaShoppingCart, FaSignOutAlt, FaHome, FaInfoCircle } from 'react-icons/fa';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import '../../styles.css'
+import { FaBuilding, FaBoxOpen, FaUsers, FaShoppingCart, FaSignOutAlt, FaHome, FaPlusCircle } from 'react-icons/fa'
+import Companies from '../Companies/CompaniesList'
+import Clients from '../Clients/ClientsList'
+import Products from '../Products/ProductsList'
+import Orders from '../Orders/OrdersList'
+import OrderLaunch from '../OrderLaunch/OrderLaunchList'
+
 
 function Dashboard() {
-    const navigate = useNavigate();
-    const [activeMenu, setActiveMenu] = useState('Home');
-    const [userName, setUserName] = useState('Eduardo Sousa');
+    const navigate = useNavigate()
+    const [activeMenu, setActiveMenu] = useState('Gestão de Comércio')
+    const [userName, setUserName] = useState('Eduardo Sousa')
 
     const handleLogout = () => {
-        alert("Você saiu da conta!");
-        navigate('/login');
+        alert("Você saiu da conta!")
+        navigate('/login')
     };
 
     const renderContent = () => {
 
         switch (activeMenu) {
-            case 'Home':
+            case 'Gestão de Comércio':
                 return (
                     <div className="home-content">
                         <h2>Bem-vindo ao Sistema</h2>
@@ -25,38 +31,46 @@ function Dashboard() {
                     </div>
                 );
             case 'Empresas':
-                return <p>Gerencie suas empresas aqui.</p>;
-            case 'Produtos':
-                return <p>Veja e gerencie produtos.</p>;
+                return <Companies />
             case 'Clientes':
-                return <p>Lista de clientes e informações.</p>;
+                return <Clients />
+            case 'Produtos':
+                return <Products />
             case 'Pedidos':
-                return <p>Controle de pedidos e status.</p>;
+                return <Orders />
+            case 'Lançamentos Pedidos':
+                return <OrderLaunch />
             default:
-                return null;
+                return null
         }
     };
 
     return (
         <div className="dashboard-container">
             <aside className="sidebar">
-                <h2>Dashboard</h2>
+                <h2 className="dashboard-title" onClick={() => setActiveMenu('Gestão de Comércio')} style={{ cursor: 'pointer' }} >
+                    Dashboard
+                </h2>
                 <ul>
-                    <li className={activeMenu === 'Home' ? 'active' : ''} onClick={() => setActiveMenu('Home')}>
-                        <FaHome /> Home
-                    </li>
                     <li className={activeMenu === 'Empresas' ? 'active' : ''} onClick={() => setActiveMenu('Empresas')}>
                         <FaBuilding /> Empresas
-                    </li>
-                    <li className={activeMenu === 'Produtos' ? 'active' : ''} onClick={() => setActiveMenu('Produtos')}>
-                        <FaBoxOpen /> Produtos
                     </li>
                     <li className={activeMenu === 'Clientes' ? 'active' : ''} onClick={() => setActiveMenu('Clientes')}>
                         <FaUsers /> Clientes
                     </li>
+                    <li className={activeMenu === 'Produtos' ? 'active' : ''} onClick={() => setActiveMenu('Produtos')}>
+                        <FaBoxOpen /> Produtos
+                    </li>
                     <li className={activeMenu === 'Pedidos' ? 'active' : ''} onClick={() => setActiveMenu('Pedidos')}>
                         <FaShoppingCart /> Pedidos
                     </li>
+                    <li
+                        className={activeMenu === 'Lançamentos Pedidos' ? 'active' : ''}
+                        onClick={() => setActiveMenu('Lançamentos Pedidos')}
+                    >
+                        <FaPlusCircle /> Lançar Pedidos
+                    </li>
+
                     <li className="logout" onClick={handleLogout}>
                         <FaSignOutAlt /> Sair
                     </li>
@@ -78,4 +92,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default Dashboard
