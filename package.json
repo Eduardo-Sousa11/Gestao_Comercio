@@ -10,11 +10,23 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.0"
+    "mongoose": "^7.8.7"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
-  }
+    "nodemon": "^3.1.10"
+  },
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eduardo-Sousa11/Gestao_Comercio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eduardo-Sousa11/Gestao_Comercio/issues"
+  },
+  "homepage": "https://github.com/Eduardo-Sousa11/Gestao_Comercio#readme"
 }
