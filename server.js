@@ -9,12 +9,12 @@ const orderRoutes = require('./routes/orders');
 const orderLaunchRoutes = require('./routes/ordersLaunch');
 
 app.use(express.json());
-app.use('/api/companies', companyRoutes);
-app.use('/api/clients', clientRoutes); 
-app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/orderslaunch', orderLaunchRoutes);
+app.use('/companies', companyRoutes);
+app.use('/clients', clientRoutes); 
+app.use('/products', productRoutes);
+app.use('/users', userRoutes);
+app.use('/orders', orderRoutes);
+app.use('/orderslaunch', orderLaunchRoutes);
 
 connectDB();
 

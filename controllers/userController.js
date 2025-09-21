@@ -1,63 +1,94 @@
-const User = require("../models/User");
+const User = require('../models/User');
 
-// Registrar novo usuário
+
 exports.registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+    try {
+        const { name, email, senha } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: 'Email já cadastrado' });
 
-    // Verifica se já existe usuário com o mesmo email
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "Email já cadastrado" });
+        const newUser = new User({ name, email, senha });
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao registrar usuário' });
     }
-
-    // Cria usuário
-    const user = await User.create({ name, email, password });
-
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };
 
-// Login do usuário
+
 exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, senha } = req.body;
+        const user = await User.findOne({ email, senha });
+        if (!user) return res.status(400).json({ message: 'Email ou senha incorretos' });
 
-    // Busca usuário por email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Credenciais inválidas" });
+        res.json({ message: 'Login realizado com sucesso', user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao realizar login' });
     }
-
-    // Compara senha
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Credenciais inválidas" });
-    }
-
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };
 
-// Listar todos os usuários (apenas para teste/admin)
+
 exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find().select("-password"); // não retorna senha
-    res.status(200).json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao buscar usuários' });
+    }
+};
+
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+        res.json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao buscar usuário' });
+    }
+};
+
+
+exports.createUser = async (req, res) => {
+    try {
+        const { name, email, senha } = req.body;
+        const newUser = new User({ name, email, senha });
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao criar usuário' });
+    }
+};
+
+
+exports.updateUser = async (req, res) => {
+    try {
+        const { name, email, senha } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { name, email, senha },
+            { new: true }
+        );
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+        res.json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao atualizar usuário' });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+        res.json({ message: 'Usuário excluído com sucesso' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao excluir usuário' });
+    }
 };
