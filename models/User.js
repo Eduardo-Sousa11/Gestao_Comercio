@@ -1,43 +1,33 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true, // garante que não existam emails duplicados
-    lowercase: true,
-    trim: true
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6 // mesma lógica da força de senha no front
-  }
-}, {
-  timestamps: true // cria createdAt e updatedAt
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    senha: { type: String, required: true }
 });
 
-// 🔒 Antes de salvar, faz hash da senha
-UserSchema.pre("save", async function(next) {
-  if (!this.isModified("password")) return next();
-  try {
+// Hash da senha antes de salvar
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('senha')) return next();
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.senha = await bcrypt.hash(this.senha, salt);
     next();
-  } catch (err) {
-    next(err);
-  }
 });
 
-// Método para comparar senha na hora do login
-UserSchema.methods.matchPassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// Método para comparar senha
+userSchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.senha);
 };
 
-module.exports = mongoose.model("User", UserSchema);
+// Método para gerar token JWT
+userSchema.methods.generateToken = function() {
+    return jwt.sign(
+        { id: this._id, email: this.email },
+        process.env.JWT_SECRET || 'segredo123', 
+        { expiresIn: '1d' }
+    );
+};
+
+module.exports = mongoose.model('User', userSchema);
