@@ -2,9 +2,19 @@ const express = require('express');
 const app = express();
 const connectDB = require('./database/db'); // ajustado para db.js
 const companyRoutes = require('./routes/companies');
+const clientRoutes = require('./routes/clients');
+const productRoutes = require('./routes/products');
+const userRoutes = require('./routes/users'); 
+const orderRoutes = require('./routes/orders');
+const orderLaunchRoutes = require('./routes/ordersLaunch');
 
 app.use(express.json());
 app.use('/api/companies', companyRoutes);
+app.use('/api/clients', clientRoutes); 
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/orderslaunch', orderLaunchRoutes);
 
 connectDB();
 

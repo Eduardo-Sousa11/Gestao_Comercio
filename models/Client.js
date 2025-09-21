@@ -1,33 +1,29 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+// models/Client.js
+const mongoose = require("mongoose")
 
-const Client = sequelize.define('Client', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    razaoSocial: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    cnpj: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            is: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/
-        }
-    }
+const ClientSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  },
+  telefone: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  empresa: {
+    type: String, // pode ser só o nome da empresa ou referência ao model Company
+    required: true,
+  }
 }, {
-    tableName: 'companies',
-    timestamps: true 
-});
+  timestamps: true // cria createdAt e updatedAt automáticos
+})
 
-module.exports = Company;
-
-
+module.exports = mongoose.model("Client", ClientSchema)

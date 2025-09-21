@@ -1,17 +1,38 @@
+// models/Order.js
 const mongoose = require('mongoose');
 
-const OrderItemSchema = new mongoose.Schema({
-  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, default: 1 },
-  price: { type: Number, required: true }
+const orderSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true, // nome do pedido
+  },
+  numero: {
+    type: String,
+    required: true, // número do pedido
+    unique: true,   // cada número deve ser único
+  },
+  cliente: {
+    type: String,
+    required: true, // nome do cliente
+  },
+  empresa: {
+    type: String,
+    required: true, // nome da empresa
+  },
+  observacao: {
+    type: String,
+    default: '',    // observação opcional
+  },
+  data: {
+    type: Date,
+    required: true, // data do pedido
+    default: Date.now,
+  },
+}, {
+  timestamps: true // cria createdAt e updatedAt automaticamente
 });
 
-const OrderSchema = new mongoose.Schema({
-  client: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
-  items: [OrderItemSchema],
-  total: { type: Number, default: 0 },
-  status: { type: String, enum: ['pending','confirmed','shipped','cancelled'], default: 'pending' },
-  createdAt: { type: Date, default: Date.now }
-});
+const Order = mongoose.model('Order', orderSchema);
 
-module.exports = mongoose.model('Order', OrderSchema);
+module.exports = Order;
+

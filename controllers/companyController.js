@@ -22,16 +22,22 @@ exports.getCompanyById = async (req, res) => {
 };
 
 exports.createCompany = async (req, res) => {
-    try {
-        const { name, razaoSocial, cnpj } = req.body;
-        const newCompany = new Company({ name, razaoSocial, cnpj });
-        await newCompany.save();
-        res.status(201).json(newCompany);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Erro ao criar empresa' });
+  try {
+    const { name, razaoSocial, cnpj } = req.body;
+
+    if (!name || !razaoSocial || !cnpj) {
+      return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }
+
+    const newCompany = new Company({ name, razaoSocial, cnpj });
+    await newCompany.save();
+    res.status(201).json(newCompany);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao criar empresa' });
+  }
 };
+
 
 exports.updateCompany = async (req, res) => {
     try {
