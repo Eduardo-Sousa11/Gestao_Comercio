@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const connectDB = require('./database/db');
 const companyRoutes = require('./routes/companies');
@@ -7,6 +8,10 @@ const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users'); 
 const orderRoutes = require('./routes/orders');
 const orderLaunchRoutes = require('./routes/ordersLaunch');
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 
 app.use(express.json());
 app.use('/companies', companyRoutes);
@@ -18,4 +23,4 @@ app.use('/orderslaunch', orderLaunchRoutes);
 
 connectDB();
 
-app.listen(3001, () => console.log('Servidor rodando na porta 3001'));
+app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
