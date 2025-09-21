@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const connectDB = require('./database/db'); // ajustado para db.js
+const connectDB = require('./database/db');
 const companyRoutes = require('./routes/companies');
 const clientRoutes = require('./routes/clients');
 const productRoutes = require('./routes/products');
@@ -18,4 +18,4 @@ app.use('/orderslaunch', orderLaunchRoutes);
 
 connectDB();
 
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+app.listen(3001, () => console.log('Servidor rodando na porta 3001'));
