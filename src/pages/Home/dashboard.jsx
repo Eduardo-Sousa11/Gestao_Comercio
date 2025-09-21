@@ -7,6 +7,7 @@ import Clients from '../Clients/ClientsList'
 import Products from '../Products/ProductsList'
 import Orders from '../Orders/OrdersList'
 import OrderLaunch from '../OrderLaunch/OrderLaunchList'
+import Users from '../Users/UsersList'
 
 
 function Dashboard() {
@@ -40,6 +41,8 @@ function Dashboard() {
                 return <Orders />
             case 'Lançamentos Pedidos':
                 return <OrderLaunch />
+            case 'Usuários':
+                return <Users />
             default:
                 return null
         }
@@ -69,6 +72,9 @@ function Dashboard() {
                         onClick={() => setActiveMenu('Lançamentos Pedidos')}
                     >
                         <FaPlusCircle /> Lançar Pedidos
+                    </li>
+                    <li className={activeMenu === 'Usuários' ? 'active' : ''} onClick={() => setActiveMenu('Usuários')}>
+                        <FaUsers  /> Usuários
                     </li>
 
                     <li className="logout" onClick={handleLogout}>

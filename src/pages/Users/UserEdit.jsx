@@ -1,14 +1,25 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa"
 import "../../styles.css"
 
-function UsersForm({ onClose, onSave }) {
+function UsersEdit({ users, onClose, onSave }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         senha: ""
-    })
+    });
+
     const [showPassword, setShowPassword] = useState(false)
+
+    useEffect(() => {
+        if (users) {
+            setFormData({
+                name: users.name,
+                email: users.email,
+                senha: users.senha
+            })
+        }
+    }, [users]);
 
     const handleInputChange = (e) => {
         setFormData({
@@ -18,16 +29,15 @@ function UsersForm({ onClose, onSave }) {
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        onSave(formData)
-        setFormData({ name: "", email: "", senha: "" })
+        e.preventDefault();
+        onSave({ ...formData, id: users.id })
     }
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h3 className="modal-title">Cadastrar Usuário</h3>
+                    <h3 className="modal-title">Editar Usuário</h3>
                     <button className="close-button" onClick={onClose}>
                         <FaTimes />
                     </button>
@@ -40,7 +50,7 @@ function UsersForm({ onClose, onSave }) {
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
-                            required
+                            required 
                         />
                     </div>
 
@@ -84,12 +94,12 @@ function UsersForm({ onClose, onSave }) {
                     </div>
 
                     <button type="submit" className="submit-button">
-                        Salvar
+                        Salvar Alterações
                     </button>
                 </form>
-            </div >
-        </div >
-    )
+            </div>
+        </div>
+    );
 }
 
-export default UsersForm
+export default UsersEdit
