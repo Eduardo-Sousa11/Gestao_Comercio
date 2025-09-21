@@ -3,6 +3,7 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import '../../styles.css'
 import UsersForm from './UserForm'
 import UsersEdit from './UserEdit'
+import api from "../../services/api"
 
 function UsersList() {
     const [users, setUsers] = useState([])
@@ -11,11 +12,13 @@ function UsersList() {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            setUsers([
-                { id: 1, name: 'Eduardo de Sousa', email: 'asdf@asdf.com', senha: '123456' },
-                { id: 1, name: 'Eduardo de Sousa', email: 'asdf@asdf.com', senha: '123456' },
-            ])
-        }
+            try {
+                const res = await api.get("/users")
+                setUsers(res.data);
+            } catch (err) {
+                console.error("Erro ao buscar usuários:", err)
+            }
+        };
         fetchUsers()
     }, [])
 
@@ -23,26 +26,40 @@ function UsersList() {
         setEditingUsers(users)
     }
 
-    const handleUpdateUsers = (updatedUsers) => {
-        setUsers(users.map(u => u.id === updatedUsers.id ? updatedUsers : u))
-        setEditingUsers(null)
+    const handleUpdateUsers = async (updatedUser) => {
+        try {
+            const res = await api.put(`/users/${updatedUser.id}`, updatedUser)
+            setUsers(users.map(u => u.id === updatedUser.id ? res.data : u))
+            setEditingUser(null)
+        } catch (err) {
+            console.error("Erro ao atualizar usuário:", err)
+        }
     }
 
-    const handleDelete = (usersId) => {
-        if (window.confirm('Deseja realmente excluir este usuário?')) {
-            setUsers(users.filter(u => u.id !== usersId))
-            alert('Usuário excluído com sucesso!');
+    const handleDelete = async (userId) => {
+        if (window.confirm("Deseja realmente excluir este usuário?")) {
+            try {
+                await api.delete(`/users/${userId}`)
+                setUsers(users.filter(u => u.id !== userId))
+            } catch (err) {
+                console.error("Erro ao excluir usuário:", err)
+            }
         }
-    };
+    }
 
     const handleAddUsers = () => {
         setIsModalOpen(true);
     };
 
-    const handleSaveUsers = (newUsers) => {
-        setUsers([...users, { ...newUsers, id: users.length + 1 }])
-        setIsModalOpen(false)
-    };
+    const handleSaveUsers = async (newUser) => {
+        try {
+            const res = await api.post("/users", newUser)
+            setUsers([...users, res.data])
+            setIsModalOpen(false)
+        } catch (err) {
+            console.error("Erro ao criar usuário:", err)
+        }
+    }
 
     return (
         <div className="companies-container">
