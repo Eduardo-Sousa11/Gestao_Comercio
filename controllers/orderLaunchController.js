@@ -14,10 +14,7 @@ exports.createOrderLaunch = async (req, res) => {
 // Listar todos os lançamentos
 exports.getOrdersLaunch = async (req, res) => {
   try {
-    // Popula os dados do pedido e produto
     const ordersLaunch = await OrderLaunch.find()
-      .populate('pedido', 'name numero cliente empresa')
-      .populate('produto', 'name valor descricao empresa')
       .sort({ createdAt: -1 });
     res.json(ordersLaunch);
   } catch (err) {
@@ -29,8 +26,6 @@ exports.getOrdersLaunch = async (req, res) => {
 exports.getOrderLaunchById = async (req, res) => {
   try {
     const orderLaunch = await OrderLaunch.findById(req.params.id)
-      .populate('pedido', 'name numero cliente empresa')
-      .populate('produto', 'name valor descricao empresa');
     if (!orderLaunch) return res.status(404).json({ error: 'Lançamento não encontrado' });
     res.json(orderLaunch);
   } catch (err) {
