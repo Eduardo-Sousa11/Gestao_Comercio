@@ -1,115 +1,58 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../../styles.css'
-import { FaBuilding, FaBoxOpen, FaUsers, FaShoppingCart, FaSignOutAlt, FaHome, FaPlusCircle } from 'react-icons/fa'
-import Companies from '../Companies/CompaniesList'
-import Clients from '../Clients/ClientsList'
-import Products from '../Products/ProductsList'
-import Orders from '../Orders/OrdersList'
-import OrderLaunch from '../OrderLaunch/OrderLaunchList'
-import Users from '../Users/UsersList'
+import React, { useState } from "react";
+import { useNavigate, Outlet } from "react-router-dom";
+import { FaBuilding, FaBoxOpen, FaUsers, FaShoppingCart, FaSignOutAlt, FaPlusCircle } from "react-icons/fa";
+import "../../styles.css";
 
+function DashboardLayout() {
+  const navigate = useNavigate();
+  const [activeMenu, setActiveMenu] = useState("Dashboard");
 
-function Dashboard() {
-    const navigate = useNavigate()
-    const [activeMenu, setActiveMenu] = useState('Gestão de Comércio')
+  const handleLogout = () => {
+    alert("Você saiu da conta!");
+    navigate("/login");
+  };
 
-    const handleLogout = () => {
-        alert("Você saiu da conta!")
-        navigate('/login')
-    };
+  const handleMenuClick = (menu, path) => {
+    setActiveMenu(menu);
+    navigate(path);
+  };
 
-    const handleMenuClick = (menu, path) => {
-        setActiveMenu(menu)
-        navigate(path)
-    }
+  return (
+    <div className="dashboard-container">
+      <aside className="sidebar">
+        <h2 onClick={() => handleMenuClick("Dashboard", "/dashboard")} style={{ cursor: "pointer" }}>Dashboard</h2>
+        <ul>
+          <li onClick={() => handleMenuClick("Empresas", "/dashboard/companies")} className={activeMenu === "Empresas" ? "active" : ""}>
+            <FaBuilding /> Empresas
+          </li>
+          <li onClick={() => handleMenuClick("Clientes", "/dashboard/clients")} className={activeMenu === "Clientes" ? "active" : ""}>
+            <FaUsers /> Clientes
+          </li>
+          <li onClick={() => handleMenuClick("Produtos", "/dashboard/products")} className={activeMenu === "Produtos" ? "active" : ""}>
+            <FaBoxOpen /> Produtos
+          </li>
+          <li onClick={() => handleMenuClick("Pedidos", "/dashboard/orders")} className={activeMenu === "Pedidos" ? "active" : ""}>
+            <FaShoppingCart /> Pedidos
+          </li>
+          <li onClick={() => handleMenuClick("Lançar Pedidos", "/dashboard/orderlaunch")} className={activeMenu === "Lançar Pedidos" ? "active" : ""}>
+            <FaPlusCircle /> Lançar Pedidos
+          </li>
+          <li onClick={() => handleMenuClick("Usuários", "/dashboard/users")} className={activeMenu === "Usuários" ? "active" : ""}>
+            <FaUsers /> Usuários
+          </li>
+          <li onClick={handleLogout}> <FaSignOutAlt /> Sair </li>
+        </ul>
+      </aside>
 
-    const renderContent = () => {
-
-        switch (activeMenu) {
-            case 'Gestão de Comércio':
-                return (
-                    <div className="home-content">
-                        <h2>Bem-vindo ao Sistema</h2>
-                        <p>Este sistema permite gerenciar empresas, produtos, clientes e pedidos de forma prática e organizada. Utilize o menu lateral para navegar entre as funcionalidades.</p>
-                        <p>Você terá acesso rápido às informações importantes e relatórios de desempenho, além de poder configurar sua conta facilmente.</p>
-                    </div>
-                );
-            case 'Empresas':
-                return <Companies />
-            case 'Clientes':
-                return <Clients />
-            case 'Produtos':
-                return <Products />
-            case 'Pedidos':
-                return <Orders />
-            case 'Lançamentos Pedidos':
-                return <OrderLaunch />
-            case 'Usuários':
-                return <Users />
-            default:
-                return null
-        }
-    };
-
-    return (
-        <div className="dashboard-container">
-            <aside className="sidebar">
-                <h2 className="dashboard-title" onClick={() => setActiveMenu('Gestão de Comércio')} style={{ cursor: 'pointer' }} >
-                    Dashboard
-                </h2>
-                <ul>
-                    <li
-                        className={activeMenu === 'Empresas' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Empresas', '/dashboard/companies')}
-                    >
-                        <FaBuilding /> Empresas
-                    </li>
-                    <li
-                        className={activeMenu === 'Clientes' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Clientes', '/dashboard/clients')}
-                    >
-                        <FaUsers /> Clientes
-                    </li>
-                    <li
-                        className={activeMenu === 'Produtos' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Produtos', '/dashboard/products')}
-                    >
-                        <FaBoxOpen /> Produtos
-                    </li>
-                    <li
-                        className={activeMenu === 'Pedidos' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Pedidos', '/dashboard/orders')}
-                    >
-                        <FaShoppingCart /> Pedidos
-                    </li>
-                    <li
-                        className={activeMenu === 'Lançamentos Pedidos' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Lançamentos Pedidos', '/dashboard/orderslaunch')}
-                    >
-                        <FaPlusCircle /> Lançar Pedidos
-                    </li>
-                    <li
-                        className={activeMenu === 'Usuários' ? 'active' : ''}
-                        onClick={() => handleMenuClick('Usuários', '/dashboard/users')}
-                    >
-                        <FaUsers /> Usuários
-                    </li>
-                    <li className="logout" onClick={handleLogout}>
-                        <FaSignOutAlt /> Sair
-                    </li>
-                </ul>
-            </aside>
-
-            <main className="dashboard-main">
-                <div className="dashboard-header">
-                    <h1>{activeMenu}</h1>
-                </div>
-                {renderContent()}
-            </main>
-
+      <main className="dashboard-main">
+        <div className="dashboard-header">
+          <h1>{activeMenu}</h1>
         </div>
-    );
+        {/* Aqui o conteúdo muda de acordo com a rota */}
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
-export default Dashboard
+export default DashboardLayout;
