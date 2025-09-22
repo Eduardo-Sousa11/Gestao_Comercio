@@ -3,50 +3,114 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import '../../styles.css'
 import ProductForm from './ProductForm'
 import ProductEdit from './ProductEdit'
+import api from "../../services/api"
 
 function ProductList() {
     const [products, setProducts] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingProduct, setEditingProduct] = useState(null)
-    const [companies] = useState([
-        { id: 1, name: 'Empresa A', razaoSocial: 'razaoSocial A', cnpj: '00.000.000/0001-01' },
-        { id: 2, name: 'Empresa B', razaoSocial: 'razaoSocial B', cnpj: '11.111.111/0001-11' },
-    ])
+    const [companies, setCompanies] = useState([])
 
+    // Buscar produtos e empresas do backend
     useEffect(() => {
         const fetchProducts = async () => {
-            setProducts([
-                { id: 1, name: 'Arroz ', valor: '15,00', descricao: 'arroz de qualidade', empresa: 'Empresa A' },
-                { id: 2, name: 'Feijão ', valor: '10,00', descricao: 'feijão de qualidade', empresa: 'Empresa B'},
-            ])
+            try {
+                const response = await api.get('/products')
+                setProducts(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar produtos:", error)
+            }
         }
+
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get('/companies')
+                setCompanies(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar empresas:", error)
+            }
+        }
+
         fetchProducts()
+        fetchCompanies()
     }, [])
 
     const handleEdit = (product) => {
         setEditingProduct(product)
     }
 
-    const handleUpdateProduct = (updatedProduct) => {
-        setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))
-        setEditingProduct(null)
+    const handleUpdateProduct = async (updatedProduct) => {
+        try {
+            let valorNumerico = updatedProduct.valor
+            if (typeof valorNumerico === "string") {
+                valorNumerico = parseFloat(
+                    valorNumerico
+                        .replace(/\./g, '')
+                        .replace(',', '.')
+                        .replace('R$ ', '')
+                )
+            }
+            const productToSend = {
+                ...updatedProduct,
+                valor: valorNumerico
+            }
+            const response = await api.put(`/products/${updatedProduct._id}`, productToSend)
+            setProducts(products.map(p => p._id === updatedProduct._id ? response.data : p))
+            setEditingProduct(null)
+            alert('Produto atualizado com sucesso!')
+        } catch (error) {
+            console.error("Erro ao atualizar produto:", error)
+            alert("Erro ao atualizar produto")
+        }
     }
 
-    const handleDelete = (productId) => {
+
+    const handleDelete = async (productId) => {
         if (window.confirm('Deseja realmente excluir este produto?')) {
-            setProducts(products.filter(c => c.id !== productId))
-            alert('Produto excluída com sucesso!');
+            try {
+                await api.delete(`/products/${productId}`)
+                setProducts(products.filter(p => p._id !== productId))
+                alert('Produto excluído com sucesso!')
+            } catch (error) {
+                console.error("Erro ao excluir produto:", error)
+                alert("Erro ao excluir produto")
+            }
         }
-    };
+    }
 
     const handleAddProduct = () => {
         setIsModalOpen(true)
-    };
+    }
 
-    const handleSaveProduct = (newProducts) => {
-        setProducts([...products, { ...newProducts, id: products.length + 1 }])
-        setIsModalOpen(false)
-    };
+    const handleSaveProduct = async (newProduct) => {
+        try {
+            if (!newProduct.valor) {
+                alert("Preencha o valor do produto")
+                return
+            }
+
+            // Remove tudo que não é número ou vírgula, substitui vírgula por ponto
+            let valorNumerico = newProduct.valor.replace(/[^\d,]/g, '').replace(',', '.')
+
+            // Converte para Number
+            valorNumerico = parseFloat(valorNumerico)
+
+            const productToSend = {
+                ...newProduct,
+                valor: valorNumerico
+            }
+
+            const response = await api.post('/products', productToSend)
+            setProducts([...products, response.data])
+            setIsModalOpen(false)
+            alert('Produto criado com sucesso!')
+        } catch (error) {
+            console.error("Erro ao salvar produto:", error)
+            alert("Erro ao salvar produto")
+        }
+    }
+
+
 
     return (
         <div className="companies-container">
@@ -60,7 +124,6 @@ function ProductList() {
             <table className="companies-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Valor</th>
                         <th>Descrição</th>
@@ -71,21 +134,19 @@ function ProductList() {
                 <tbody>
                     {products.map(product => (
                         <tr key={product.id}>
-                            <td>{product.id}</td>
                             <td>{product.name}</td>
-                            <td>{product.valor}</td>
+                            <td>{product.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
                             <td>{product.descricao}</td>
                             <td>{product.empresa}</td>
                             <td>
                                 <FaEdit className="action-icon edit" onClick={() => handleEdit(product)} />
-                                <FaTrash className="action-icon delete" onClick={() => handleDelete(product.id)} />
+                                <FaTrash className="action-icon delete" onClick={() => handleDelete(product._id)} />
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            {/* Modal de Cadastro */}
             {isModalOpen && (
                 <ProductForm
                     empresas={companies}
@@ -94,7 +155,6 @@ function ProductList() {
                 />
             )}
 
-            {/* Modal de Edição */}
             {editingProduct && (
                 <ProductEdit
                     product={editingProduct}
@@ -103,9 +163,8 @@ function ProductList() {
                     onSave={handleUpdateProduct}
                 />
             )}
-
         </div>
-    );
+    )
 }
 
 export default ProductList

@@ -5,7 +5,7 @@ import "../../styles.css"
 function ProductEdit({ product, empresas = [], onClose, onSave }) {
     const [formData, setFormData] = useState({
         name: "",
-        valor: "",
+        valor: 0,
         descricao: "",
         empresa: ""
     })
@@ -14,10 +14,11 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
         if (product) {
             const empresaSelecionada = empresas.find(e => e.name === product.empresa)
             setFormData({
-                name: product.name,
-                valor: product.valor,
-                descricao: product.descricao,
-                empresa: empresaSelecionada ? empresaSelecionada.id : ""
+                name: product.name || "",
+                valor: product.valor || 0, // mantém como número
+                descricao: product.descricao || "",
+                empresa: empresaSelecionada ? empresaSelecionada.name : "",
+                _id: product._id
             })
         }
     }, [product, empresas])
@@ -30,28 +31,24 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
     }
 
     const handleValorChange = (e) => {
-        let value = e.target.value;
-
-        value = value.replace(/\D/g, "");
-
-        value = (Number(value) / 100).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
-        });
-
-        setFormData({ ...formData, valor: value });
-    };
+        let value = e.target.value.replace(/\D/g, "")
+        setFormData({ ...formData, valor: Number(value) / 100 })
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const empresaSelecionada = empresas.find(e => e.id === parseInt(formData.empresa))
+        const empresaSelecionada = empresas.find(e => e.name === formData.empresa)
         onSave({
             ...formData,
-            id: product.id,
-            empresa: empresaSelecionada ? empresaSelecionada.name : "",
-            cnpj: empresaSelecionada ? empresaSelecionada.cnpj : ""
+            _id: product._id,
+            empresa: empresaSelecionada ? empresaSelecionada.name : ""
         })
     }
+
+    const valorFormatado = formData.valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    })
 
     return (
         <div className="modal-overlay">
@@ -62,6 +59,7 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
                         <FaTimes />
                     </button>
                 </div>
+
                 <form onSubmit={handleSubmit} className="modal-form">
                     <div className="form-group">
                         <label>Nome</label>
@@ -79,7 +77,7 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
                         <input
                             type="text"
                             name="valor"
-                            value={formData.valor}
+                            value={valorFormatado}
                             onChange={handleValorChange}
                             required
                         />
@@ -106,7 +104,7 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
                         >
                             <option value="">Selecione uma empresa</option>
                             {empresas.map((emp) => (
-                                <option key={emp.id} value={emp.id}>
+                                <option key={emp.id} value={emp.name}>
                                     {emp.name}
                                 </option>
                             ))}
@@ -119,7 +117,7 @@ function ProductEdit({ product, empresas = [], onClose, onSave }) {
                 </form>
             </div>
         </div>
-    );
+    )
 }
 
 export default ProductEdit

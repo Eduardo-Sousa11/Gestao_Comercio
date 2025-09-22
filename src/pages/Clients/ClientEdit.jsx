@@ -10,17 +10,18 @@ function ClientEdit({ client, empresas = [], onClose, onSave }) {
     empresa: ""
   })
 
+  // Inicializa os dados do formulário quando o cliente é passado
   useEffect(() => {
     if (client) {
-      const empresaSelecionada = empresas.find(e => e.name === client.empresa)
       setFormData({
-        name: client.name,
-        email: client.email,
-        telefone: client.telefone,
-        empresa: empresaSelecionada ? empresaSelecionada.id : ""
+        name: client.name || "",
+        email: client.email || "",
+        telefone: client.telefone || "",
+        empresa: client.empresa || "",
+        _id: client._id
       })
     }
-  }, [client, empresas])
+  }, [client])
 
   const handleInputChange = (e) => {
     setFormData({
@@ -35,15 +36,16 @@ function ClientEdit({ client, empresas = [], onClose, onSave }) {
     value = value.replace(/^(\d{2})(\d)/, "($1) $2")
     value = value.replace(/(\d{4,5})(\d{4})$/, "$1-$2")
     setFormData({ ...formData, telefone: value })
-  };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const empresaSelecionada = empresas.find(e => e.id === parseInt(formData.empresa))
+    // Busca o CNPJ da empresa selecionada
+    const empresaSelecionada = empresas.find(e => e.name === formData.empresa)
+
     onSave({
       ...formData,
-      id: client.id,
-      empresa: empresaSelecionada ? empresaSelecionada.name : "",
+      _id: client._id,
       cnpj: empresaSelecionada ? empresaSelecionada.cnpj : ""
     })
   }
@@ -57,6 +59,7 @@ function ClientEdit({ client, empresas = [], onClose, onSave }) {
             <FaTimes />
           </button>
         </div>
+
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
             <label>Nome</label>
@@ -102,7 +105,7 @@ function ClientEdit({ client, empresas = [], onClose, onSave }) {
             >
               <option value="">Selecione uma empresa</option>
               {empresas.map((emp) => (
-                <option key={emp.id} value={emp.id}>
+                <option key={emp.id} value={emp.name}>
                   {emp.name}
                 </option>
               ))}
@@ -115,7 +118,7 @@ function ClientEdit({ client, empresas = [], onClose, onSave }) {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export default ClientEdit

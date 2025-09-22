@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import '../../styles.css';
+import api from "../../services/api"
 
 function Register() {
   const [name, setName] = useState('');
@@ -9,17 +10,36 @@ function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError('')
+
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem!");
+      setError("As senhas não coincidem!");
       return;
     }
-    console.log('Cadastro:', name, email, password);
-    alert(`Conta criada para: ${name}`);
-    navigate('/login');
+
+    setLoading(true);
+
+    try {
+      const res = await api.post('/users/register', {
+        name,
+        email,
+        senha: password
+      });
+
+      alert(`Conta criada com sucesso para: ${res.data.user.name}`);
+      navigate('/login'); // Redireciona para login
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Erro ao criar conta');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const passwordStrength = (pass) => {
@@ -38,6 +58,9 @@ function Register() {
         <div className="login-form-container">
           <h2>Cadastro</h2>
           <p>Digite suas informações para criar sua conta</p>
+
+          {error && <p className="error">{error}</p>}
+
           <form onSubmit={handleRegister}>
             <input
               type="text"
@@ -81,7 +104,9 @@ function Register() {
               required
             />
 
-            <button type="submit">Cadastrar →</button>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Criando...' : 'Cadastrar →'}
+            </button>
           </form>
 
           <p className="register-link">

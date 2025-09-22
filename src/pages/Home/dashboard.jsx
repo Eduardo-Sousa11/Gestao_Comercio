@@ -13,12 +13,16 @@ import Users from '../Users/UsersList'
 function Dashboard() {
     const navigate = useNavigate()
     const [activeMenu, setActiveMenu] = useState('Gestão de Comércio')
-    const [userName, setUserName] = useState('Eduardo Sousa')
 
     const handleLogout = () => {
         alert("Você saiu da conta!")
         navigate('/login')
     };
+
+    const handleMenuClick = (menu, path) => {
+        setActiveMenu(menu)
+        navigate(path)
+    }
 
     const renderContent = () => {
 
@@ -55,28 +59,42 @@ function Dashboard() {
                     Dashboard
                 </h2>
                 <ul>
-                    <li className={activeMenu === 'Empresas' ? 'active' : ''} onClick={() => setActiveMenu('Empresas')}>
+                    <li
+                        className={activeMenu === 'Empresas' ? 'active' : ''}
+                        onClick={() => handleMenuClick('Empresas', '/dashboard/companies')}
+                    >
                         <FaBuilding /> Empresas
                     </li>
-                    <li className={activeMenu === 'Clientes' ? 'active' : ''} onClick={() => setActiveMenu('Clientes')}>
+                    <li
+                        className={activeMenu === 'Clientes' ? 'active' : ''}
+                        onClick={() => handleMenuClick('Clientes', '/dashboard/clients')}
+                    >
                         <FaUsers /> Clientes
                     </li>
-                    <li className={activeMenu === 'Produtos' ? 'active' : ''} onClick={() => setActiveMenu('Produtos')}>
+                    <li
+                        className={activeMenu === 'Produtos' ? 'active' : ''}
+                        onClick={() => handleMenuClick('Produtos', '/dashboard/products')}
+                    >
                         <FaBoxOpen /> Produtos
                     </li>
-                    <li className={activeMenu === 'Pedidos' ? 'active' : ''} onClick={() => setActiveMenu('Pedidos')}>
+                    <li
+                        className={activeMenu === 'Pedidos' ? 'active' : ''}
+                        onClick={() => handleMenuClick('Pedidos', '/dashboard/orders')}
+                    >
                         <FaShoppingCart /> Pedidos
                     </li>
                     <li
                         className={activeMenu === 'Lançamentos Pedidos' ? 'active' : ''}
-                        onClick={() => setActiveMenu('Lançamentos Pedidos')}
+                        onClick={() => handleMenuClick('Lançamentos Pedidos', '/dashboard/orderslaunch')}
                     >
                         <FaPlusCircle /> Lançar Pedidos
                     </li>
-                    <li className={activeMenu === 'Usuários' ? 'active' : ''} onClick={() => setActiveMenu('Usuários')}>
-                        <FaUsers  /> Usuários
+                    <li
+                        className={activeMenu === 'Usuários' ? 'active' : ''}
+                        onClick={() => handleMenuClick('Usuários', '/dashboard/users')}
+                    >
+                        <FaUsers /> Usuários
                     </li>
-
                     <li className="logout" onClick={handleLogout}>
                         <FaSignOutAlt /> Sair
                     </li>
@@ -86,10 +104,6 @@ function Dashboard() {
             <main className="dashboard-main">
                 <div className="dashboard-header">
                     <h1>{activeMenu}</h1>
-                    <div className="user-card">
-                        <FaUsers className="user-icon" />
-                        <span>{userName}</span>
-                    </div>
                 </div>
                 {renderContent()}
             </main>

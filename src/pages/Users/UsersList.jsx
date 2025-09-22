@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import '../../styles.css'
-import UsersForm from './UserForm'
 import UsersEdit from './UserEdit'
 import api from "../../services/api"
 
 function UsersList() {
     const [users, setUsers] = useState([])
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingUsers, setEditingUsers] = useState(null)
 
     useEffect(() => {
@@ -30,7 +28,8 @@ function UsersList() {
         try {
             const res = await api.put(`/users/${updatedUser.id}`, updatedUser)
             setUsers(users.map(u => u.id === updatedUser.id ? res.data : u))
-            setEditingUser(null)
+            setEditingUsers(null)
+            alert("Usuário atualizado com sucesso!")
         } catch (err) {
             console.error("Erro ao atualizar usuário:", err)
         }
@@ -47,33 +46,15 @@ function UsersList() {
         }
     }
 
-    const handleAddUsers = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleSaveUsers = async (newUser) => {
-        try {
-            const res = await api.post("/users", newUser)
-            setUsers([...users, res.data])
-            setIsModalOpen(false)
-        } catch (err) {
-            console.error("Erro ao criar usuário:", err)
-        }
-    }
-
     return (
         <div className="companies-container">
             <div className="companies-header">
                 <h2>Lista de Usuários</h2>
-                <button className="add-company-button" onClick={handleAddUsers}>
-                    <FaPlus /> Cadastrar Usuários
-                </button>
             </div>
 
             <table className="companies-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Ações</th>
@@ -82,7 +63,6 @@ function UsersList() {
                 <tbody>
                     {users.map(user => (
                         <tr key={user.id}>
-                            <td>{user.id}</td>
                             <td>{user.name}</td>
                             <td>{user.email}</td>
                             <td>
@@ -93,14 +73,6 @@ function UsersList() {
                     ))}
                 </tbody>
             </table>
-
-            {/* Modal de Cadastro */}
-            {isModalOpen && (
-                <UsersForm
-                    onClose={() => setIsModalOpen(false)}
-                    onSave={handleSaveUsers}
-                />
-            )}
 
             {/* Modal de Edição */}
             {editingUsers && (

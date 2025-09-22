@@ -6,21 +6,21 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
     const [formData, setFormData] = useState({
         produto: "",
         pedido: "",
-        quantidade: ""
+        quantidade: "",
+        _id: ""
     })
 
+    // Preenche o form quando o orderLaunch, produtos e pedidos estiverem carregados
     useEffect(() => {
-        if (orderLaunch) {
-            const produtoSelecionada = produtos.find(p => p.name === orderLaunch.produto);
-            const pedidoSelecionado = pedidos.find(p => p.name === orderLaunch.pedido);
+        if (orderLaunch && produtos.length > 0 && pedidos.length > 0) {
             setFormData({
-                quantidade: orderLaunch.quantidade,
-                produto: produtoSelecionada ? produtoSelecionada.id : "",
-                pedido: pedidoSelecionado ? pedidoSelecionado.id : "",
+                quantidade: orderLaunch.quantidade || "",
+                produto: orderLaunch.produto?._id || "",
+                pedido: orderLaunch.pedido?._id || "",
+                _id: orderLaunch._id
             })
         }
     }, [orderLaunch, produtos, pedidos])
-
 
     const handleInputChange = (e) => {
         setFormData({
@@ -31,16 +31,15 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const produtoSelecionada = produtos.find(pro => pro.id === parseInt(formData.produto));
-        const pedidoSelecionado = pedidos.find(ped => ped.id === parseInt(formData.pedido));
-        onSave({
-            ...formData,
-            id: orderLaunch.id,
-            produto: produtoSelecionada ? produtoSelecionada.name : "",
-            pedido: pedidoSelecionado ? pedidoSelecionado.name : ""
-        })
-    }
 
+        if (!formData.produto || !formData.pedido) {
+            alert("Selecione um produto e um pedido")
+            return
+        }
+
+        // Envia os dados atualizados para o backend
+        onSave(formData)
+    }
 
     return (
         <div className="modal-overlay">
@@ -51,6 +50,7 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
                         <FaTimes />
                     </button>
                 </div>
+
                 <form onSubmit={handleSubmit} className="modal-form">
                     <div className="form-group">
                         <label>Produto</label>
@@ -62,7 +62,7 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
                         >
                             <option value="">Selecione um produto</option>
                             {produtos.map((pro) => (
-                                <option key={pro.id} value={pro.id}>
+                                <option key={pro._id} value={pro._id}>
                                     {pro.name}
                                 </option>
                             ))}
@@ -79,7 +79,7 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
                         >
                             <option value="">Selecione um pedido</option>
                             {pedidos.map((ped) => (
-                                <option key={ped.id} value={ped.id}>
+                                <option key={ped._id} value={ped._id}>
                                     {ped.name}
                                 </option>
                             ))}
@@ -103,7 +103,7 @@ function OrderLaunchEdit({ orderLaunch, produtos = [], pedidos = [], onClose, on
                 </form>
             </div>
         </div>
-    );
+    )
 }
 
 export default OrderLaunchEdit

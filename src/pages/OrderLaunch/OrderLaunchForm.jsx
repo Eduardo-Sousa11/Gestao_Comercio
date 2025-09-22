@@ -54,7 +54,7 @@ function OrderLaunchForm({ onClose, onSave, produtos = [], pedidos = [] }) {
                         >
                             <option value="">Selecione um produto</option>
                             {produtos.map((pro) => (
-                                <option key={pro.name} value={pro.name}>
+                                <option key={pro._id} value={pro._id}>
                                     {pro.name}
                                 </option>
                             ))}
@@ -71,7 +71,7 @@ function OrderLaunchForm({ onClose, onSave, produtos = [], pedidos = [] }) {
                         >
                             <option value="">Selecione um pedido</option>
                             {pedidos.map((ped) => (
-                                <option key={ped.name} value={ped.name}>
+                                <option key={ped._id} value={ped._id}>
                                     {ped.name}
                                 </option>
                             ))}

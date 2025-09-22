@@ -1,23 +1,15 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Login from './pages/Auth/Login'
-import Register from './pages/Auth/Register'
-import Home from './pages/Home/Dashboard'
-import Companies from './pages/Companies/CompaniesList'
-import Clients from './pages/Clients/ClientsList'
-import OrderLaunch from './pages/OrderLaunch/OrderLaunchList'
-import Orders from './pages/Orders/OrdersList'
+// App.tsx
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Auth/Login";
+import Home from "./pages/Home/Dashboard";
 
 function App() {
   return (
     <Routes>
+      {/* Redireciona a raiz para /login */}
+      <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Home />} />
-      <Route path="/companies" element={<Companies />} />
-      <Route path="/clients" element={<Clients />} />
-      <Route path="/orderslaunch" element={<OrderLaunch />} />
-      <Route path="/orders" element={<Orders />} />
+      <Route path="/home" element={<Home />} />
     </Routes>
   );
 }

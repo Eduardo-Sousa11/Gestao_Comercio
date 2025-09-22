@@ -3,51 +3,81 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import '../../styles.css'
 import ClientForm from './ClientForm'
 import ClientEdit from './ClientEdit'
-import CompaniesList from "../Companies/CompaniesList"
+import api from "../../services/api"
 
 function ClientList() {
     const [clients, setClients] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingClient, setEditingClient] = useState(null)
-    const [companies] = useState([
-        { id: 1, name: 'Empresa A', razaoSocial: 'razaoSocial A', cnpj: '00.000.000/0001-01' },
-        { id: 2, name: 'Empresa B', razaoSocial: 'razaoSocial B', cnpj: '11.111.111/0001-11' },
-    ])
+    const [companies, setCompanies] = useState([])
 
     useEffect(() => {
         const fetchClients = async () => {
-            setClients([
-                { id: 1, name: 'Eduardo de Sousa ', email: 'asdf@asdf.com', telefone: '(11) 1111-1111', empresa: 'Empresa A', cnpj: '00.000.000/0001-01' },
-                { id: 2, name: 'Eduardo de Sousa ', email: 'asdf@asdf.com', telefone: '(11) 1111-1111', empresa: 'Empresa A', cnpj: '00.000.000/0001-01' },
-            ])
+            try {
+                const response = await api.get('/clients')
+                setClients(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar clientes:", error)
+            }
         }
+
+        const fetchCompanies = async () => {
+            try {
+                const response = await api.get('/companies')
+                setCompanies(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar empresas:", error)
+            }
+        }
+
         fetchClients()
+        fetchCompanies()
     }, [])
 
     const handleEdit = (client) => {
         setEditingClient(client)
     }
 
-    const handleUpdateClient = (updatedClient) => {
-        setClients(clients.map(c => c.id === updatedClient.id ? updatedClient : c))
-        setEditingClient(null)
+    const handleUpdateClient = async (updatedClient) => {
+        try {
+            const response = await api.put(`/clients/${updatedClient._id}`, updatedClient)
+            setClients(clients.map(c => c._id === updatedClient._id ? response.data : c))
+            setEditingClient(null)
+            alert('Cliente atualizado com sucesso!')
+        } catch (error) {
+            console.error("Erro ao atualizar cliente:", error);
+            alert("Erro ao atualizar cliente")
+        }
     }
 
-    const handleDelete = (clientId) => {
+    const handleDelete = async (clientId) => {
         if (window.confirm('Deseja realmente excluir este cliente?')) {
-            setClients(clients.filter(c => c.id !== clientId))
-            alert('Cliente excluída com sucesso!');
+            try {
+                await api.delete(`/clients/${clientId}`)
+                setClients(clients.filter(c => c._id !== clientId))
+                alert('Cliente excluído com sucesso!')
+            } catch (error) {
+                console.error("Erro ao excluir cliente:", error)
+                alert("Erro ao excluir cliente")
+            }
         }
-    };
+    }
 
     const handleAddClient = () => {
         setIsModalOpen(true)
-    };
+    }
 
-    const handleSaveClient = (newClients) => {
-        setClients([...clients, { ...newClients, id: clients.length + 1 }])
-        setIsModalOpen(false)
-    };
+    const handleSaveClient = async (newClient) => {
+        try {
+            const response = await api.post('/clients', newClient)
+            setClients([...clients, response.data])
+            setIsModalOpen(false)
+            alert('Cliente criado com sucesso!')
+        } catch (error) {
+            console.error("Erro ao salvar cliente:", error)
+            alert("Erro ao salvar cliente")
+        }
+    }
 
     return (
         <div className="companies-container">
@@ -61,7 +91,6 @@ function ClientList() {
             <table className="companies-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Telefone</th>
@@ -72,14 +101,13 @@ function ClientList() {
                 <tbody>
                     {clients.map(client => (
                         <tr key={client.id}>
-                            <td>{client.id}</td>
                             <td>{client.name}</td>
                             <td>{client.email}</td>
                             <td>{client.telefone}</td>
                             <td>{client.empresa}</td>
                             <td>
                                 <FaEdit className="action-icon edit" onClick={() => handleEdit(client)} />
-                                <FaTrash className="action-icon delete" onClick={() => handleDelete(client.id)} />
+                                <FaTrash className="action-icon delete" onClick={() => handleDelete(client._id)} />
                             </td>
                         </tr>
                     ))}

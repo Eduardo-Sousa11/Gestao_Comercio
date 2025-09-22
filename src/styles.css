@@ -693,6 +693,27 @@ button:hover {
   border-color: #007bff; /* mesma cor do focus dos inputs */
 }
 
+.alert {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 6px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: #ffebeb;
+  color: #c53030;
+  border: 1px solid #c53030;
+}
+
+.alert-success {
+  background-color: #e6ffed;
+  color: #2f855a;
+  border: 1px solid #2f855a;
+}
+
+
 
 
 

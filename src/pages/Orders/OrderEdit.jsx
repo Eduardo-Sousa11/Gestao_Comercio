@@ -12,48 +12,50 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
         data: ""
     })
 
+    const formatDateForInput = (isoDate) => {
+        if (!isoDate) return ""
+        return isoDate.split("T")[0]
+    }
+
+    const formatDateForAPI = (inputDate) => {
+        if (!inputDate) return ""
+        const [year, month, day] = inputDate.split("-")
+        return `${day}/${month}/${year}`
+    }
+
     useEffect(() => {
         if (order) {
-            const empresaSelecionada = empresas.find(e => e.name === order.empresa);
-            const clienteSelecionado = clientes.find(c => c.name === order.cliente);
+            const empresaSelecionada = empresas.find(e => e.name === order.empresa)
+            const clienteSelecionada = clientes.find(c => c.name === order.cliente)
             setFormData({
-                name: order.name,
-                numero: order.numero,
-                cliente: clienteSelecionado ? clienteSelecionado.id : "",
-                empresa: empresaSelecionada ? empresaSelecionada.id : "",
-                observacao: order.observacao,
-                data: order.data
+                name: order.name || "",
+                numero: order.numero || "",
+                empresa: empresaSelecionada ? empresaSelecionada.name : "",
+                cliente: clienteSelecionada ? clienteSelecionada.name : "",
+                observacao: order.observacao || "",
+                data: formatDateForInput(order.data),
+                _id: order._id
             })
         }
-    }, [order, empresas, clientes])
-
+    }, [order])
 
     const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }))
     }
-
-    const handleDateChange = (e) => {
-        const [year, month, day] = e.target.value.split("-")
-        setFormData({ ...formData, data: `${day}/${month}/${year}` })
-    }
-
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const empresaSelecionada = empresas.find(emp => emp.id === parseInt(formData.empresa));
-        const clienteSelecionado = clientes.find(cli => cli.id === parseInt(formData.cliente));
+        const empresaSelecionada = empresas.find(e => e.name === formData.empresa)
+        const clienteSelecionado = clientes.find(c => c.name === formData.cliente)
         onSave({
             ...formData,
-            id: order.id,
+            _id: order._id,
             empresa: empresaSelecionada ? empresaSelecionada.name : "",
-            cnpj: empresaSelecionada ? empresaSelecionada.cnpj : "",
-            cliente: clienteSelecionado ? clienteSelecionado.name : ""
+            cliente: clienteSelecionado ? clienteSelecionado.name : "",
+            data: formatDateForAPI(formData.data)
         })
     }
-
 
     return (
         <div className="modal-overlay">
@@ -77,7 +79,7 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                     </div>
 
                     <div className="form-group">
-                        <label>Numero</label>
+                        <label>Número</label>
                         <input
                             type="number"
                             name="numero"
@@ -97,7 +99,7 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                         >
                             <option value="">Selecione um cliente</option>
                             {clientes.map((cli) => (
-                                <option key={cli.id} value={cli.id}>
+                                <option key={cli.id} value={cli.name}>
                                     {cli.name}
                                 </option>
                             ))}
@@ -114,7 +116,7 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                         >
                             <option value="">Selecione uma empresa</option>
                             {empresas.map((emp) => (
-                                <option key={emp.id} value={emp.id}>
+                                <option key={emp.id} value={emp.name}>
                                     {emp.name}
                                 </option>
                             ))}
@@ -128,7 +130,6 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                             name="observacao"
                             value={formData.observacao}
                             onChange={handleInputChange}
-                            required
                         />
                     </div>
 
@@ -137,12 +138,8 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                         <input
                             type="date"
                             name="data"
-                            value={
-                                formData.data
-                                    ? `${formData.data.split("/")[2]}-${formData.data.split("/")[1]}-${formData.data.split("/")[0]}`
-                                    : ""
-                            }
-                            onChange={handleDateChange}
+                            value={formData.data}
+                            onChange={handleInputChange}
                             required
                         />
                     </div>
@@ -153,7 +150,7 @@ function OrderEdit({ order, clientes = [], empresas = [], onClose, onSave }) {
                 </form>
             </div>
         </div>
-    );
+    )
 }
 
 export default OrderEdit

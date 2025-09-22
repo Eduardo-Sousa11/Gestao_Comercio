@@ -7,15 +7,15 @@ function CompaniesEdit({ company, onClose, onSave }) {
     name: "",
     razaoSocial: "",
     cnpj: ""
-  });
+  })
 
-  // Preenche os campos quando a empresa é recebida
   useEffect(() => {
     if (company) {
       setFormData({
         name: company.name,
         razaoSocial: company.razaoSocial,
-        cnpj: company.cnpj
+        cnpj: company.cnpj,
+        _id: company._id
       })
     }
   }, [company]);
@@ -29,7 +29,7 @@ function CompaniesEdit({ company, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...formData, id: company.id })
+    onSave({ ...formData, _id: company._id  })
   }
 
   return (

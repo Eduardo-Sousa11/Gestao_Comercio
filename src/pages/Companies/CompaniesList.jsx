@@ -3,6 +3,7 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa'
 import '../../styles.css'
 import CompaniesForm from './CompanieForm'
 import CompaniesEdit from './CompanieEdit'
+import api from "../../services/api"
 
 function CompaniesList() {
     const [companies, setCompanies] = useState([])
@@ -11,10 +12,13 @@ function CompaniesList() {
 
     useEffect(() => {
         const fetchCompanies = async () => {
-            setCompanies([
-                { id: 1, name: 'Empresa A', razaoSocial: 'razaoSocial A', cnpj: '00.000.000/0001-01' },
-                { id: 2, name: 'Empresa B', razaoSocial: 'razaoSocial B', cnpj: '11.111.111/0001-11' },
-            ])
+            try {
+                const response = await api.get('/companies')
+                setCompanies(response.data)
+            } catch (error) {
+                console.error('Erro ao buscar empresas:', error)
+                alert('Erro ao buscar empresas do servidor')
+            }
         }
         fetchCompanies()
     }, [])
@@ -23,26 +27,46 @@ function CompaniesList() {
         setEditingCompany(company)
     }
 
-    const handleUpdateCompany = (updatedCompany) => {
-        setCompanies(companies.map(c => c.id === updatedCompany.id ? updatedCompany : c))
-        setEditingCompany(null)
+    const handleUpdateCompany = async (updatedCompany) => {
+        try {
+            const response = await api.put(`/companies/${updatedCompany._id}`, updatedCompany)
+            setCompanies(companies.map(c => c._id === updatedCompany._id ? response.data : c))
+            setEditingCompany(null)
+            alert('Empresa atualizada com sucesso!')
+        } catch (error) {
+            console.error('Erro ao atualizar empresa:', error)
+            alert('Erro ao atualizar empresa')
+        }
     }
 
-    const handleDelete = (companyId) => {
+    const handleDelete = async (companyId) => {
         if (window.confirm('Deseja realmente excluir esta empresa?')) {
-            setCompanies(companies.filter(c => c.id !== companyId))
-            alert('Empresa excluída com sucesso!');
+            try {
+                await api.delete(`/companies/${companyId}`)
+                setCompanies(companies.filter(c => c._id !== companyId))
+                alert('Empresa excluída com sucesso!')
+            } catch (error) {
+                console.error('Erro ao excluir empresa:', error)
+                alert('Erro ao excluir empresa')
+            }
         }
-    };
+    }
 
     const handleAddCompany = () => {
         setIsModalOpen(true);
     };
 
-    const handleSaveCompany = (newCompany) => {
-        setCompanies([...companies, { ...newCompany, id: companies.length + 1 }])
-        setIsModalOpen(false)
-    };
+    const handleSaveCompany = async (newCompany) => {
+        try {
+            const response = await api.post('/companies', newCompany)
+            setCompanies([...companies, response.data])
+            setIsModalOpen(false)
+            alert('Empresa criada com sucesso!')
+        } catch (error) {
+            console.error('Erro ao criar empresa:', error)
+            alert('Erro ao criar empresa')
+        }
+    }
 
     return (
         <div className="companies-container">
@@ -56,7 +80,6 @@ function CompaniesList() {
             <table className="companies-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome Fantasia</th>
                         <th>Razão Social</th>
                         <th>CNPJ</th>
@@ -65,14 +88,13 @@ function CompaniesList() {
                 </thead>
                 <tbody>
                     {companies.map(company => (
-                        <tr key={company.id}>
-                            <td>{company.id}</td>
+                        <tr key={company._id}>
                             <td>{company.name}</td>
                             <td>{company.razaoSocial}</td>
                             <td>{company.cnpj}</td>
                             <td>
                                 <FaEdit className="action-icon edit" onClick={() => handleEdit(company)} />
-                                <FaTrash className="action-icon delete" onClick={() => handleDelete(company.id)} />
+                                <FaTrash className="action-icon delete" onClick={() => handleDelete(company._id)} />
                             </td>
                         </tr>
                     ))}
